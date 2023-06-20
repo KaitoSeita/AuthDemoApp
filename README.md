@@ -9,7 +9,7 @@ Language：Swift
 FirebaseAuthを使用したサインイン認証およびサインアップのデモアプリです。画面遷移をNavigationStack(NavigationViewはiOS16からduplicated)を使用せずにデータバインディングやViewModelを活用して実装しています。データの登録処理では、Swift Concurrencyを使用してメインスレッドではローディング中のUIの表示を、サブスレッドではデータの登録処理をできるようにして非同期処理を実装しています。
 
 ## 使用した技術
-Swift Concurrency
+### Swift Concurrency
 - 使用したコード
 ```
 Task {
@@ -28,9 +28,10 @@ actor SignInUpAuth {
     }
 }
 ```
--　 コードの概要
+- コードの概要
   - アクタークラス
     - メールとパスワードを引数とし、async throwsでエラーを吐かせるメソッドを定義
     - resultにサインイン処理の結果を格納されるのを待ってからユーザーIDを取得する
   - Task
     - do/catch構文を使用して、処理にアクタークラスのメソッドを呼び出し、エラーを吐いたらエラー表示をさせる処理を記述
+- 実際の挙動
