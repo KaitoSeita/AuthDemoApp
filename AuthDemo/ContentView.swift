@@ -1,9 +1,5 @@
 import SwiftUI
 
-// スプラッシュ画面でUserDefaults内のInfo使ってログイン試行して失敗したらContentViewへ（再ログイン認証要求）
-// キーボードの種類の指定もしておくこと
-// option + cmd + "[" or "]"
-
 struct ContentView: View {
     @ObservedObject var progressColor = ProgressColor()
     @ObservedObject var arrow: Arrow = Arrow()

@@ -77,9 +77,6 @@ class SignInUp: ObservableObject {
     @Published var name = ""
     @Published var id = ""
     @Published var prohibit = false
-    @Published var focusemail: Bool = false
-    @Published var focuspassword: Bool = false
-    @Published var focusreInput: Bool = false
 }
 
 class Arrow: ObservableObject {
@@ -125,14 +122,6 @@ func isValidEmail(_ email: String) -> Bool {
     let pattern = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
     let emailCheck = NSPredicate(format:"SELF MATCHES %@", pattern)
     return emailCheck.evaluate(with: email)
-}
-/// emailとpasswordを非同期でuserDefaultsに保存する
-/// - Parameters:
-///   - email: emailアドレス
-///   - password: パスワード
-func registerSignInInfo(_ email: String, _ password: String) async throws {
-    async let _ = UserDefaults.standard.set(email, forKey: SignInInfo.email)
-    async let _ = UserDefaults.standard.set(password, forKey: SignInInfo.password)
 }
 
 // extension

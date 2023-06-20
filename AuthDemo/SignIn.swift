@@ -1,16 +1,12 @@
 import SwiftUI
 import FirebaseAuth
 
-// 入力時の強調表示がおかしい 設計し直し
-
 struct SignIn: View {
-    @State private var registeredEmail: String = UserDefaults.standard.string(forKey: SignInInfo.email) ?? ""       // 再ログイン時のemail保存先
-    @State private var registeredPass: String = UserDefaults.standard.string(forKey: SignInInfo.password) ?? ""     // 再ログイン時のpass保存先
     @State private var showPassword: Bool = false
     @State private var pageCase: SignInCase = .email
-    @State private var forgotPopUp: Bool = false        // email / pass を忘れた際の処理
-    @State private var userId: String = ""      // ログインユーザーのIDを保持 → FireStoreの参照で使用するだけなので常時保持しておく必要はなく, 画面遷移時の渡しのみ
+    @State private var resetPassFlag: Bool = false        // email / pass を忘れた際の処理
     @State private var isCompleted: Bool = false
+    @State private var errorMessage: String = ""      // エラーメッセージ
     @Binding var backToHome: HomePageCase
     @ObservedObject var signIn = SignInUp()
     @ObservedObject var load = Loading()
@@ -23,7 +19,7 @@ struct SignIn: View {
             if !isCompleted{
                 inputInfo()
             }else{
-                Complete(userId: userId)
+                Complete()
             }
         }
     }
@@ -54,7 +50,7 @@ struct SignIn: View {
                 }else{
                     // パスワード, emailの再設定はモーダル表示で処理させる
                     Button(action: {
-                        self.forgotPopUp.toggle()
+                        self.resetPassFlag.toggle()
                     }, label: {
                         Text("Forgot Password ?")
                             .font(.system(size: 15, design: .rounded))
@@ -62,16 +58,15 @@ struct SignIn: View {
                             .bold()
                     })
                 }
+                if errorMessage != "" {
+                    Text(errorMessage)
+                        .font(.system(size: 13, design: .rounded))
+                        .foregroundColor(.red)
+                }
                 Spacer()
             }
             .padding(EdgeInsets(top: 80, leading: 30, bottom: 0, trailing: 30))
-            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidHideNotification)) { _ in
-                withAnimation(.spring(response: 0.5, dampingFraction: 0.6, blendDuration: 1)){
-                    signIn.focusemail = false
-                    signIn.focuspassword = false
-                }
-            }
-            .sheet(isPresented: $forgotPopUp){
+            .sheet(isPresented: $resetPassFlag){
                 ZStack{
                     Color.gray.opacity(0.2)
                         .ignoresSafeArea()
@@ -84,10 +79,16 @@ struct SignIn: View {
             SignInBackward(prohibit: signIn.prohibit, backToHome: $backToHome, pageCase: $pageCase)
         }else{
             LoadingPopUp(load: load)
+                .onChange(of: errorMessage){ newMessage in
+                    // エラーメッセージの変化を検知し、それが空白でなければエラー表示
+                    if newMessage != "" {
+                        withAnimation(.easeInOut(duration: 0.2)){
+                            load.flag = false
+                        }
+                    }
+                }
         }
     }
-    // ボタンっぽい振る舞いをさせること(scaleEffect)
-    // ボタンをGeometryEffectで変形させてローディング表示に変更
     @ViewBuilder private func signInButton() -> some View {
         RoundedRectangle(cornerRadius: 20)
             .frame(width: 330, height: 60)
@@ -102,21 +103,17 @@ struct SignIn: View {
             }
             .onTapGesture {
                 UIApplication.shared.closeKeyboard()
+                // ログイン処理
                 Task {
                     do {
-                        try await registerSignInInfo(signIn.email, signIn.password)     // 登録が完了するまで待ち
-                        userId = try await signInAuth.signIn(signIn.email, signIn.password)
+                        let userId = try await signInAuth.signIn(signIn.email, signIn.password)
                         if !userId.isEmpty {
                             withAnimation(.easeInOut(duration: 0.2)){
                                 isCompleted.toggle()
                             }
                         }
                     }catch{
-                        let error = error as NSError?
-                        // この中でerrorに関する記述を行う
-                        // エラーを吐いたらエラーのポップアップを表示すること
-                        print(error!.localizedDescription)
-                        print(AuthErrorCode.Code(rawValue: error!.code)!)
+                        setErrorMessage(error)
                     }
                 }
                 withAnimation(.easeInOut(duration: 0.3)){
@@ -190,10 +187,31 @@ struct SignIn: View {
                 }
             }else{
                 // メールを確認させて続行リンクを踏ませる
+                
             }
-            
             Spacer()
         }.padding(EdgeInsets(top: 20, leading: 30, bottom: 0, trailing: 30))
+    }
+    // エラーメッセージの表示
+    private func setErrorMessage(_ error: Error?){
+        if let error = error as NSError? {
+            if let errorCode = AuthErrorCode.Code(rawValue: error.code) {
+                switch errorCode {
+                case .invalidEmail:
+                    errorMessage = "メールアドレスの形式が違います。"
+                case .emailAlreadyInUse:
+                    errorMessage = "このメールアドレスはすでに使われています。"
+                case .weakPassword:
+                    errorMessage = "パスワードが弱すぎます。"
+                case .userNotFound, .wrongPassword:
+                    errorMessage = "メールアドレス、またはパスワードが間違っています"
+                case .userDisabled:
+                    errorMessage = "このユーザーアカウントは無効化されています"
+                default:
+                    errorMessage = "予期せぬエラーが発生しました。\nしばらく時間を置いてから再度お試しください。"
+                }
+            }
+        }
     }
 }
 

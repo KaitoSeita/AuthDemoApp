@@ -1,7 +1,8 @@
 import SwiftUI
+import FirebaseAuth
 
 struct Complete: View {
-    let userId: String
+    @State private var user = Auth.auth().currentUser       // ランダムに生成された識別ID
     var body: some View {
         Text("COMPLETED!")
     }
@@ -9,6 +10,6 @@ struct Complete: View {
 
 struct Complete_Previews: PreviewProvider {
     static var previews: some View {
-        Complete(userId: "")
+        Complete()
     }
 }

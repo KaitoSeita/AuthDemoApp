@@ -23,18 +23,6 @@ struct InputForm: View {
                         .font(.system(.body, design: .rounded))
                         .keyboardType(.alphabet)
                         .autocapitalization(.none)
-                        .onTapGesture{
-                            withAnimation(.spring(response: 0.5, dampingFraction: 0.6, blendDuration: 1)){
-                                input.focusemail = true
-                                input.focuspassword = false
-                                input.focusreInput = false
-                            }
-                        }
-                        .onSubmit{
-                            withAnimation(.spring(response: 0.5, dampingFraction: 0.45, blendDuration: 1)){
-                                input.focusemail = false
-                            }
-                        }
                     Spacer()
                     if isValidEmail(input.email){
                         Image(systemName: "checkmark.circle")
@@ -47,7 +35,6 @@ struct InputForm: View {
                     }
                 }.padding(EdgeInsets(top: 0, leading: 25, bottom: 0, trailing: 25))
             }
-            .scaleEffect(input.focusemail ? 1.05 : 1.0)
     }
 }
 // パスワードの入力フォーム
@@ -73,35 +60,11 @@ struct PassForm: View {
                             .font(.system(.body, design: .rounded))
                             .keyboardType(.alphabet)
                             .autocapitalization(.none)
-                            .onTapGesture{
-                                withAnimation(.spring(response: 0.5, dampingFraction: 0.6, blendDuration: 1)){
-                                    input.focusemail = false
-                                    input.focusreInput = false
-                                    input.focuspassword = true
-                                }
-                            }
-                            .onSubmit{
-                                withAnimation(.spring(response: 0.5, dampingFraction: 0.45, blendDuration: 1)){
-                                    input.focuspassword = false
-                                }
-                            }
                     }else{
                         SecureField("password", text: $input.password)
                             .disabled(input.prohibit)
                             .font(.system(.body, design: .rounded))
                             .keyboardType(.alphabet)
-                            .onTapGesture{
-                                withAnimation(.spring(response: 0.5, dampingFraction: 0.45, blendDuration: 1)){
-                                    input.focuspassword = true
-                                    input.focusreInput = false
-                                    input.focusemail = false
-                                }
-                            }
-                            .onSubmit{
-                                withAnimation(.spring(response: 0.5, dampingFraction: 0.45, blendDuration: 1)){
-                                    input.focuspassword = false
-                                }
-                            }
                     }
                     Spacer()
                     Image(systemName: isShow ? "eye.slash.fill" : "eye.fill")
@@ -111,7 +74,6 @@ struct PassForm: View {
                         }
                 }.padding(EdgeInsets(top: 0, leading: 25, bottom: 0, trailing: 25))
             }
-            .scaleEffect(input.focuspassword ? 1.05 : 1.0)
     }
 }
 // パスワード再入力用の入力フォーム
@@ -137,34 +99,10 @@ struct reInputForm: View {
                             .font(.system(.body, design: .rounded))
                             .keyboardType(.alphabet)
                             .autocapitalization(.none)
-                            .onTapGesture{
-                                withAnimation(.spring(response: 0.5, dampingFraction: 0.6, blendDuration: 1)){
-                                    input.focusemail = false
-                                    input.focuspassword = false
-                                    input.focusreInput = true
-                                }
-                            }
-                            .onSubmit{
-                                withAnimation(.spring(response: 0.5, dampingFraction: 0.45, blendDuration: 1)){
-                                    input.focusreInput = false
-                                }
-                            }
                     }else{
                         SecureField("password", text: $input.reInput)
                             .font(.system(.body, design: .rounded))
                             .keyboardType(.alphabet)
-                            .onTapGesture{
-                                withAnimation(.spring(response: 0.5, dampingFraction: 0.45, blendDuration: 1)){
-                                    input.focusreInput = true
-                                    input.focuspassword = false
-                                    input.focusemail = false
-                                }
-                            }
-                            .onSubmit{
-                                withAnimation(.spring(response: 0.5, dampingFraction: 0.45, blendDuration: 1)){
-                                    input.focusreInput = false
-                                }
-                            }
                     }
                     Spacer()
                     Image(systemName: isShow ? "eye.slash.fill" : "eye.fill")
@@ -174,7 +112,6 @@ struct reInputForm: View {
                         }
                 }.padding(EdgeInsets(top: 0, leading: 25, bottom: 0, trailing: 25))
             }
-            .scaleEffect(input.focusreInput ? 1.05 : 1.0)
     }
 }
 // 新規登録時の戻るボタン

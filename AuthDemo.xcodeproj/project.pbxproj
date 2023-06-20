@@ -83,9 +83,9 @@
 			children = (
 				35CEDFF62A12139400429B00 /* AuthDemoApp.swift */,
 				35CEDFF82A12139400429B00 /* ContentView.swift */,
-				35BBF2822A150C1B00C9C2C9 /* Complete.swift */,
 				3506313B2A131CF5002D362E /* SignIn.swift */,
 				3506313D2A131D13002D362E /* SignUp.swift */,
+				35BBF2822A150C1B00C9C2C9 /* Complete.swift */,
 				3506313F2A131D28002D362E /* Components.swift */,
 				350631412A131D3A002D362E /* Models */,
 				35CEDFFA2A12139600429B00 /* Assets.xcassets */,
