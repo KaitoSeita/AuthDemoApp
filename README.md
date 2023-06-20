@@ -1,8 +1,8 @@
 # AuthDemo
 ## 環境
 Language：Swift
-- Version：5.7.1
-- Xcode：14.0
+- Version：5.8.1
+- Xcode：14.3.1
 ### ライブラリ
 - FirebaseAuth
 ## 概要
