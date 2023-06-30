@@ -8,6 +8,9 @@ Language：Swift
 ## 概要
 FirebaseAuthを使用したサインイン認証およびサインアップのデモアプリです。画面遷移をNavigationStack(NavigationViewはiOS16からduplicated)を使用せずにデータバインディングやViewModelを活用して実装しています。データの登録処理では、Swift Concurrencyを使用してメインスレッドではローディング中のUIの表示を、サブスレッドではデータの登録処理をできるようにして非同期処理を実装しています。
 
+
+![sample](https://github.com/KaitoSeita/AuthDemo/assets/113151647/456ef09d-c646-4565-a3b1-effc85357208)
+
 ## 使用した技術
 ### Swift Concurrency
 - 使用したコード
